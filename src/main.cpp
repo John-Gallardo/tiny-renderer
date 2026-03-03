@@ -1,5 +1,7 @@
 #include <cmath>
 #include "tgaimage.h"
+#include "point.h"
+#include <iostream>
 
 constexpr TGAColor white   = {255, 255, 255, 255}; // attention, BGRA order
 constexpr TGAColor green   = {  0, 255,   0, 255};
@@ -51,25 +53,32 @@ void line(int ax, int ay, int bx, int by, TGAImage &framebuffer, TGAColor color)
     }
 }
 
+/**
+ * @brief Projects a 3D point (x, y, z) to 2D (x, y)
+ *
+ * This function turns a 3D coords to 2D coords using the formula
+ * x' = x/z
+ * y' = y/z
+ *
+ * @param point The 3D point we transform into 2D.
+ */
+Point2D project(Point3D point) {
+    int x = point.getX(), y = point.getY(), z = point.getZ();
+    return Point2D(x / z, y / z);
+}
+
 int main(int argc, char** argv) {
-    constexpr int width  = 64;
-    constexpr int height = 64;
+    if (argc != 2) {
+        std::cerr << "Error: Need to provide an object\n";
+        exit(-1);
+    }
+
+    // 1440p image
+    constexpr int width  = 2560;
+    constexpr int height = 1440;
     TGAImage framebuffer(width, height, TGAImage::RGB);
 
-    int ax =  7, ay =  3;
-    int bx = 12, by = 37;
-    int cx = 62, cy = 53;
-
-    framebuffer.set(ax, ay, white);
-    framebuffer.set(bx, by, white);
-    framebuffer.set(cx, cy, white);
     
-    // Write a line from a to b
-    line(ax, ay, bx, by, framebuffer, red);
-    // Write a line from a to c
-    line(ax, ay, cx, cy, framebuffer, green);
-    // Write a line from b to c
-    line(cx, cy, bx, by, framebuffer, blue);
 
     framebuffer.write_tga_file("framebuffer.tga");
     return 0;
