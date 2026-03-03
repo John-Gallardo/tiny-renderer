@@ -1,6 +1,11 @@
 /**
  * @brief A face simply contains 3 triangles.
  */
+
+#pragma once
+#include <vector>
+#include "triangle.h"
+
 class Face {
     public:
         // Constructor

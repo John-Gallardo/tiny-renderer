@@ -3,11 +3,14 @@
  * and faces (which reminds me of an EBO in OpenGL, except it defines 3 triangles per face)
  */
 
+#pragma once
 #include <fstream>
 #include <vector>
 #include <iostream>
 #include <string>
 #include <sstream>
+#include "triangle.h"
+#include "face.h"
 
 // Use alias for vertex since implementation would be basically the same
 using Vertex = Point3D;
@@ -61,14 +64,12 @@ class Model {
             return m_vertices;
         }
 
-        std::vector<int> getFaces() {
+        std::vector<Face> getFaces() {
             return m_faces;
         }
 
     private:
         std::ifstream m_file;
         std::vector<Vertex> m_vertices;
-        std::vector<int> m_faces;
-        // TODO: Create a 'Face' object with that stores the 9 indices.
-        // TODO: Create a 'Triangle' object storing 3 indices each
+        std::vector<Face> m_faces;
 };

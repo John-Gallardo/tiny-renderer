@@ -3,6 +3,8 @@
  * Implementation details are below.
  ********************************************************************************************/
 
+#pragma once
+
 /**
  * @brief Point2D represents a point in a 2D space (x, y)
  *

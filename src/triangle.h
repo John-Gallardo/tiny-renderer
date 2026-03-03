@@ -1,6 +1,9 @@
 /**
  * @brief A triangle simply contains the 3 indices of a vertex.
  */
+#pragma once
+#include <vector>
+
 class Triangle {
     public:
         // Constructor
