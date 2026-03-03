@@ -1,7 +1,8 @@
 #include <cmath>
+#include <iostream>
 #include "tgaimage.h"
 #include "point.h"
-#include <iostream>
+#include "model.h"
 
 constexpr TGAColor white   = {255, 255, 255, 255}; // attention, BGRA order
 constexpr TGAColor green   = {  0, 255,   0, 255};
@@ -67,6 +68,9 @@ Point2D project(Point3D point) {
     return Point2D(x / z, y / z);
 }
 
+/**
+ * Main function.
+ */
 int main(int argc, char** argv) {
     if (argc != 2) {
         std::cerr << "Error: Need to provide an object\n";
