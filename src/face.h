@@ -1,22 +1,20 @@
 /**
- * @brief A face simply contains 3 triangles.
+ * A face simply contains 3 face vertices.
  */
 
 #pragma once
 #include <vector>
-#include "triangle.h"
+#include "facevertex.h"
 
 class Face {
     public:
-        // Constructor
-        Face(Triangle t1, Triangle t2, Triangle t3)
-            : m_triangles {t1, t2, t3}
+        Face(FaceVertex v1, FaceVertex v2, FaceVertex v3)
+            : m_faceVertices {v1, v2, v3}
         {}
 
-        // Getter
-        std::vector<Triangle> getTriangles() {
-            return m_triangles;
+        std::vector<FaceVertex> getFaceVertices() {
+            return m_faceVertices;
         }
     private:
-        std::vector<Triangle> m_triangles;
+        std::vector<FaceVertex> m_faceVertices;
 };

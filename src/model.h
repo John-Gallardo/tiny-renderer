@@ -9,11 +9,9 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-#include "triangle.h"
+#include "vertex.h"
 #include "face.h"
-
-// Use alias for vertex since implementation would be basically the same
-using Vertex = Point3D;
+#include "facevertex.h"
 
 /**
  * @brief The model class stores all vertex & face data of a given object.
@@ -56,21 +54,21 @@ class Model {
                 
                 // Case 2: data type 'f' for face
                 else if (word == "f") {
-                    // Read next 3 triangles
-                    std::vector<Triangle> triangles{};
+                    // Read the sets of indices (eg. (v, vt, vn) = (1, 2, 3))
+                    std::vector<FaceVertex> faceVertices{};
                     for (int i = 0; i < 3; i++) {
                         ss >> word;
                         std::stringstream indexStream {word};
                         std::vector<int> indices{};
                         std::string buffer;
                         while (std::getline(indexStream, buffer, '/')) {
-                            int index = std::stoi(buffer);
+                            int index = std::stoi(buffer) - 1;  // -1 to convert from obj to C++ indexing
                             indices.push_back(index);
                         }
-                        Triangle triangle = Triangle(indices[0], indices[1], indices[2]);
-                        triangles.push_back(triangle);
+                        FaceVertex faceVertex = FaceVertex(indices[0], indices[1], indices[2]);
+                        faceVertices.push_back(faceVertex);
                     }
-                    Face face = Face(triangles[0], triangles[1], triangles[2]);
+                    Face face = Face(faceVertices[0], faceVertices[1], faceVertices[2]);
                     m_faces.push_back(face);
                 }
             }

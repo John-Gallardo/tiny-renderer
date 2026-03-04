@@ -10,6 +10,10 @@ constexpr TGAColor red     = {  0,   0, 255, 255};
 constexpr TGAColor blue    = {255, 128,  64, 255};
 constexpr TGAColor yellow  = {  0, 200, 255, 255};
 
+// Image dimensions
+constexpr int width  = 1440;
+constexpr int height = 1440;
+
 /**
  * @brief Draws a line between point a & b.
  *
@@ -55,17 +59,35 @@ void line(int ax, int ay, int bx, int by, TGAImage &framebuffer, TGAColor color)
 }
 
 /**
- * @brief Projects a 3D point (x, y, z) to 2D (x, y)
- *
- * This function turns a 3D coords to 2D coords using the formula
- * x' = x/z
- * y' = y/z
- *
- * @param point The 3D point we transform into 2D.
+ * @brief Spits orthogonal projection of the vector (x, y, z)
+ * 
+ * @param vertex The normalized coordinates (x, y, z) that we 
+ * @return Point2D (x, y) in the 
  */
-Point2D project(Point3D point) {
-    int x = point.getX(), y = point.getY(), z = point.getZ();
-    return Point2D(x / z, y / z);
+Point2D project(Vertex vertex) {
+    float x = vertex.getX(), y = vertex.getY();
+    // +1 to convert from range [-1, 1] to [0, 2]
+    x = x + 1;
+    y = y + 1;
+    // Multiply x & y by width/2 & height/2 respectively to turn into corresponding pixel coordinates
+    // (i.e we want coordinates in range (x, y) = [0-1280, 0-720])
+    x *= width/2;
+    y *= height/2;
+    return Point2D(x, y);
+}
+
+/**
+ * @brief Reads all vertices & converts them to 2D points.
+ *
+ * @param The array of vertices we want to convert into 2D points.
+ */
+std::vector<Point2D> convertTo2D(std::vector<Vertex> &vertices) {
+    std::vector<Point2D> points{};
+    for (auto vertex : vertices) {
+        Point2D point = project(vertex);
+        points.push_back(point);
+    }
+    return points;
 }
 
 /**
@@ -77,13 +99,38 @@ int main(int argc, char** argv) {
         exit(-1);
     }
 
-    // 1440p image
-    constexpr int width  = 2560;
-    constexpr int height = 1440;
     TGAImage framebuffer(width, height, TGAImage::RGB);
     
-    // TODO: Read the file path into a 'model' object & iterate through every triangle from every face!
+    // Read model & get vertices + faces
     Model model = Model(argv[1]);
+    std::vector<Vertex> vertices = model.getVertices();
+    std::vector<Face> faces = model.getFaces();
+    
+    // Convert vertices (x, y, z normalized) to a 2D point
+    std::vector<Point2D> points = convertTo2D(vertices);
+    
+    // Draw every face
+    for (Face face : faces) {
+        // Grab face vertices
+        std::vector<FaceVertex> faceVertices = face.getFaceVertices();
+        FaceVertex v1 = faceVertices[0];
+        FaceVertex v2 = faceVertices[1];
+        FaceVertex v3 = faceVertices[2];
+
+        // Grab indices for vertices
+        int indexA = v1.getVertexIndex();
+        int indexB = v2.getVertexIndex();
+        int indexC = v3.getVertexIndex();
+
+        // Grab points corresponding to indices & draw the triangle
+        Point2D a = points[indexA];
+        Point2D b = points[indexB];
+        Point2D c = points[indexC];
+
+        line(a.getX(), a.getY(), b.getX(), b.getY(), framebuffer, red);
+        line(a.getX(), a.getY(), c.getX(), c.getY(), framebuffer, red);
+        line(c.getX(), c.getY(), b.getX(), b.getY(), framebuffer, red);
+    }
 
     framebuffer.write_tga_file("framebuffer.tga");
     return 0;
