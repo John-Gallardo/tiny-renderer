@@ -23,7 +23,7 @@ using Vertex = Point3D;
  */
 class Model {
     public:
-        Model(std::string filePath)
+        Model(char *filePath)
             : m_file { filePath }
         {
             // Check if file was successfully read
@@ -46,7 +46,7 @@ class Model {
                     std::vector<float> pos{};
                     for (int i = 0; i < 3; i++) {
                         ss >> word;
-                        pos[i] = std::stof(word);
+                        pos.push_back(std::stof(word));
                     }
                     
                     // Create vertex & append to vertices
@@ -55,7 +55,24 @@ class Model {
                 }
                 
                 // Case 2: data type 'f' for face
-                // TODO: Implement this case
+                else if (word == "f") {
+                    // Read next 3 triangles
+                    std::vector<Triangle> triangles{};
+                    for (int i = 0; i < 3; i++) {
+                        ss >> word;
+                        std::stringstream indexStream {word};
+                        std::vector<int> indices{};
+                        std::string buffer;
+                        while (std::getline(indexStream, buffer, '/')) {
+                            int index = std::stoi(buffer);
+                            indices.push_back(index);
+                        }
+                        Triangle triangle = Triangle(indices[0], indices[1], indices[2]);
+                        triangles.push_back(triangle);
+                    }
+                    Face face = Face(triangles[0], triangles[1], triangles[2]);
+                    m_faces.push_back(face);
+                }
             }
         }
 

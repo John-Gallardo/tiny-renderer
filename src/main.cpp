@@ -81,8 +81,9 @@ int main(int argc, char** argv) {
     constexpr int width  = 2560;
     constexpr int height = 1440;
     TGAImage framebuffer(width, height, TGAImage::RGB);
-
     
+    // TODO: Read the file path into a 'model' object & iterate through every triangle from every face!
+    Model model = Model(argv[1]);
 
     framebuffer.write_tga_file("framebuffer.tga");
     return 0;
