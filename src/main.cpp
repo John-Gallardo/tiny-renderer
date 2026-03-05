@@ -20,16 +20,17 @@ constexpr int height = 1440;
  * Given 2 points a & b, this function draws a line to the frame buffer with the given color
  * using a modified version of Bresenham's line drawing algorithm. In specific, instead of
  * sampling 't' between 0-1 some number of times, we iterate how wide or how tall the line is
- * depending on which is bigger.
+ * depending on which is bigger (so there is no over or under sampling).
  *
- * @param ax The 'x' value of point a.
- * @param ay The 'y' value of point a.
- * @param bx The 'x' value of point b.
- * @param by The 'y' value of point b.
- * @param framebuffer The framebuffer we write to.
- * @param color The color we set the line.
+ * @param a Point 'a' in the 2D plane
+ * @param b Point 'b' in the 2D plane
+ * @param framebuffer The frame buffer we write to
+ * @param color The color we want to make the line
  */
-void line(int ax, int ay, int bx, int by, TGAImage &framebuffer, TGAColor color) {
+void line(const Point2D &a, const Point2D &b, TGAImage &framebuffer, const TGAColor &color) {
+    // Grab x & y positions of given points
+    int ax = a.getX(), ay = a.getY(), bx = b.getX(), by = b.getY();
+
     // If line is steeper than it is wide, iterate by how tall rather than how wide a line should be.
     // Achieved by swapping ax & ay, & bx & by.
     int width = std::abs(ax - bx), height = std::abs(ay - by);
@@ -48,7 +49,7 @@ void line(int ax, int ay, int bx, int by, TGAImage &framebuffer, TGAColor color)
 
     // Iterate through # of horizontal pixels & sampling accordingly
     for (int x=ax; x<=bx; x++) {
-        float t = (x-ax) / static_cast<float>(bx-ax);
+        float t = (x-ax) / static_cast<float>(bx-ax);  // Rearranged x formula for t
         int y = std::round((ay + (by-ay)*t));
         if (steep) {
             framebuffer.set(y, x, color);
@@ -59,10 +60,10 @@ void line(int ax, int ay, int bx, int by, TGAImage &framebuffer, TGAColor color)
 }
 
 /**
- * @brief Spits orthogonal projection of the vector (x, y, z)
+ * @brief Transforms the given vertex into screenspace coordinates (x, y)
  * 
- * @param vertex The normalized coordinates (x, y, z) that we 
- * @return Point2D (x, y) in the 
+ * @param vertex The vertex we want to transform
+ * @return The corresponding screenspace coordinates
  */
 Point2D project(Vertex vertex) {
     float x = vertex.getX(), y = vertex.getY();
@@ -70,16 +71,17 @@ Point2D project(Vertex vertex) {
     x = x + 1;
     y = y + 1;
     // Multiply x & y by width/2 & height/2 respectively to turn into corresponding pixel coordinates
-    // (i.e we want coordinates in range (x, y) = [0-1280, 0-720])
+    // (i.e range is now [0-width, 0-height]
     x *= width/2;
     y *= height/2;
     return Point2D(x, y);
 }
 
 /**
- * @brief Reads all vertices & converts them to 2D points.
+ * @brief Converts the given array of vertices into their corresponding 2D screenspace coordinates
  *
- * @param The array of vertices we want to convert into 2D points.
+ * @param vertices The array of vertices we want to transform
+ * @return The corresponding 2D screenspace coordinates
  */
 std::vector<Point2D> convertTo2D(std::vector<Vertex> &vertices) {
     std::vector<Point2D> points{};
@@ -106,7 +108,7 @@ int main(int argc, char** argv) {
     std::vector<Vertex> vertices = model.getVertices();
     std::vector<Face> faces = model.getFaces();
     
-    // Convert vertices (x, y, z normalized) to a 2D point
+    // Convert vertices to corresponding 2D screenspace coordinates
     std::vector<Point2D> points = convertTo2D(vertices);
     
     // Draw every face
@@ -126,10 +128,9 @@ int main(int argc, char** argv) {
         Point2D a = points[indexA];
         Point2D b = points[indexB];
         Point2D c = points[indexC];
-
-        line(a.getX(), a.getY(), b.getX(), b.getY(), framebuffer, red);
-        line(a.getX(), a.getY(), c.getX(), c.getY(), framebuffer, red);
-        line(c.getX(), c.getY(), b.getX(), b.getY(), framebuffer, red);
+        line(a, b, framebuffer, red);
+        line(a, c, framebuffer, red);
+        line(b, c, framebuffer, red);
     }
 
     framebuffer.write_tga_file("framebuffer.tga");

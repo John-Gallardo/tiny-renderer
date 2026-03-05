@@ -1,6 +1,6 @@
 /**
- * @brief Defines the model class, which stores its vertices (x, y, z) 
- * and faces (which reminds me of an EBO in OpenGL, except it defines 3 triangles per face)
+ * This header file defines the model class, which stores the given .obj files
+ * vertices & faces
  */
 
 #pragma once
@@ -14,10 +14,7 @@
 #include "facevertex.h"
 
 /**
- * @brief The model class stores all vertex & face data of a given object.
- *
- * This class reads a given file path, & and decodes each line into either a
- * vertex, or a face. 
+ * @brief The model class stores all vertex & face data of a given .obj file.
  */
 class Model {
     public:
@@ -33,7 +30,7 @@ class Model {
             // Read file line by line
             std::string line{};
             while (std::getline(m_file, line)) {
-                // Read data type
+                // Read data type (i.e is it v, f)
                 std::stringstream ss {line};
                 std::string word{};
                 ss >> word;
@@ -75,11 +72,11 @@ class Model {
         }
 
         // Getters
-        std::vector<Vertex> getVertices() {
+        std::vector<Vertex> getVertices() const {
             return m_vertices;
         }
 
-        std::vector<Face> getFaces() {
+        std::vector<Face> getFaces() const {
             return m_faces;
         }
 

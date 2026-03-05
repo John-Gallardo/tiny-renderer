@@ -1,8 +1,13 @@
 /**
- * Vertex implementation.
- * In practice, this is only used with normalized 3D points (x, y, z all with range [-1, 1])
+ * This header file defines my vertex implementation.
  */
 
+#pragma once
+
+/**
+ * A vertex holds normalized coordinates in the 3D plane
+ * i.e (x, y, z), which all have a range [-1, 1]
+ */
 class Vertex {
     public:
         Vertex(float x, float y, float z) 
@@ -10,15 +15,15 @@ class Vertex {
         {}
 
         // Getters
-        float getX() {
+        float getX() const {
             return m_x;
         }
 
-        float getY() {
+        float getY() const {
             return m_y;
         }
 
-        float getZ() {
+        float getZ() const {
             return m_z;
         }
     private:

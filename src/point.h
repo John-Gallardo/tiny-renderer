@@ -17,11 +17,11 @@ class Point2D {
             : m_x { x }, m_y { y }
         {}
 
-        int getX() {
+        int getX() const {
             return m_x;
         }
 
-        int getY() {
+        int getY() const {
             return m_y;
         }
 

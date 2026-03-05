@@ -1,10 +1,13 @@
 /**
- * Contains the vertices of a face.
- * i.e the vertex index (v), vertex texture index (vt), and vertex normal index (vn).
+ * This header file defines the face vertex.
  */
 
 #pragma once
 
+/**
+ * A face vertex simply holds the vertex index (v), the vertex texture index (vt),
+ * and the vertex normal index (vn).
+ */
 class FaceVertex {
     public:
         FaceVertex(int v, int vt, int vn) 
@@ -12,15 +15,15 @@ class FaceVertex {
         {}
         
         // Getters
-        int getVertexIndex() {
+        int getVertexIndex() const {
             return m_v;
         }
 
-        int getTextureIndex() {
+        int getTextureIndex() const {
             return m_vt;
         }
 
-        int getNormalIndex() {
+        int getNormalIndex() const {
             return m_vn;
         }
     private: 
