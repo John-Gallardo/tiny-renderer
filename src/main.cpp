@@ -60,6 +60,24 @@ void line(const Point2D &a, const Point2D &b, TGAImage &framebuffer, const TGACo
 }
 
 /**
+ * @brief Draws a triangle given 3 points in the XY-plane.
+ *
+ * Given 3 points (a, b, c) this function draws a triangle to the framebuffer with the given color
+ * using the 'line' function between a-b, b-c, & a-c.
+ *
+ * @param a Point 'a' in the 2D plane
+ * @param b Point 'b' in the 2D plane
+ * @param c Point 'c' in the 2D plane
+ * @param framebuffer The framebuffer we write to.
+ * @param color The color we want to make the triangle.
+ */
+void triangle(const Point2D &a, const Point2D &b, const Point2D &c, TGAImage &framebuffer, const TGAColor &color) {
+    line(a, b, framebuffer, color);
+    line(a, c, framebuffer, color);
+    line(b, c, framebuffer, color);
+}
+
+/**
  * @brief Transforms the given vertex into screenspace coordinates (x, y)
  * 
  * @param vertex The vertex we want to transform
@@ -128,9 +146,7 @@ int main(int argc, char** argv) {
         Point2D a = points[indexA];
         Point2D b = points[indexB];
         Point2D c = points[indexC];
-        line(a, b, framebuffer, red);
-        line(a, c, framebuffer, red);
-        line(b, c, framebuffer, red);
+        triangle(a, b, c, framebuffer, red);
     }
 
     framebuffer.write_tga_file("framebuffer.tga");
